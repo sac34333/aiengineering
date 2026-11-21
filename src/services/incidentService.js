@@ -31,6 +31,25 @@ function getIncident(id) {
   return incident ? withSla(incident) : undefined;
 }
 
+// Statuses that can still breach. A resolved or closed incident cannot.
+const ACTIVE_STATUSES = ['open', 'in_progress'];
+
+// An incident is at risk once 25% or less of its resolution target remains.
+const AT_RISK_THRESHOLD = 0.25;
+
+function listAtRisk(now = new Date()) {
+  return store
+    .all()
+    .filter((i) => ACTIVE_STATUSES.includes(i.status))
+    .map((i) => ({ incident: i, remaining: sla.minutesRemaining(i, now) }))
+    .filter(({ incident, remaining }) => {
+      const budget = sla.targetHoursFor(incident.priority) * 60;
+      return remaining <= budget * AT_RISK_THRESHOLD;
+    })
+    .sort((a, b) => a.remaining - b.remaining)
+    .map(({ incident }) => withSla(incident));
+}
+
 function createIncident(payload) {
   const title = (payload.title || '').trim();
   if (!title) {
@@ -65,6 +84,7 @@ function assign(id, assignee) {
 module.exports = {
   ValidationError,
   listIncidents,
+  listAtRisk,
   getIncident,
   createIncident,
   updateStatus,

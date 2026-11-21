@@ -10,6 +10,10 @@ router.get('/', (req, res) => {
   res.json({ incidents: service.listIncidents({ status, priority }) });
 });
 
+router.get('/at-risk', (req, res) => {
+  res.json({ incidents: service.listAtRisk() });
+});
+
 router.get('/:id', (req, res) => {
   const incident = service.getIncident(req.params.id);
   if (!incident) {
