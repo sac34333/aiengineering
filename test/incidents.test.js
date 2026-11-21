@@ -123,10 +123,10 @@ test('GET /incidents/at-risk returns an incidents array', async () => {
   assert.ok(Array.isArray(body.incidents));
 });
 
-test('GET /incidents/at-risk excludes resolved incidents', async () => {
+test('GET /incidents/at-risk excludes finished incidents', async () => {
   const res = await fetch(`${baseUrl}/incidents/at-risk`);
   const body = await res.json();
-  assert.ok(body.incidents.every((i) => i.status !== 'resolved'));
+  assert.ok(body.incidents.every((i) => i.status !== 'resolved' && i.status !== 'closed'));
 });
 
 test('GET /incidents/at-risk orders by least time remaining first', async () => {
