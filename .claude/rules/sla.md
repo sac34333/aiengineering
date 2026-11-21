@@ -17,11 +17,17 @@ from the incident's `createdAt`.
 | P3 | 24 hours |
 | P4 | 72 hours |
 
-Rules that follow from the contract:
+## Which incidents can breach
 
-- `SLA_TARGET_HOURS` holds these targets in hours, not minutes and not milliseconds.
-- A P1 incident raised exactly one hour ago is precisely at its deadline:
-  `minutesRemaining` is `0` and `breached` is `false`.
+Only `open` and `in_progress` incidents can breach. A `resolved` or `closed`
+incident is finished, so nobody needs to act on it and it must never appear in a
+list of work that needs attention.
+
+`VALID_STATUSES` has four entries. Two of them mean active and two mean finished.
+Any filter that decides what still needs attention must account for all four.
+
+## How the derived fields behave
+
 - `minutesRemaining` is negative once the deadline has passed.
 - `breached` is `true` only when `minutesRemaining` is below zero.
 - Changing a target means the support contract changed. Never adjust these values to
