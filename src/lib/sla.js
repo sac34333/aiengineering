@@ -21,7 +21,7 @@ function targetHoursFor(priority) {
 function deadlineFor(incident) {
   const created = new Date(incident.createdAt);
   const hours = targetHoursFor(incident.priority);
-  return new Date(created.getTime() + hours * 60 * 1000);
+  return new Date(created.getTime() + hours * 60 * 60 * 1000);
 }
 
 // Minutes remaining before the deadline. Negative once it has passed.

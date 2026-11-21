@@ -32,7 +32,7 @@ test('GET /incidents returns the seeded incidents', async () => {
   const res = await fetch(`${baseUrl}/incidents`);
   assert.equal(res.status, 200);
   const body = await res.json();
-  assert.equal(body.incidents.length, 5);
+  assert.equal(body.incidents.length, 6);
 });
 
 test('GET /incidents filters by status', async () => {
