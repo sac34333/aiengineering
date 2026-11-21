@@ -41,14 +41,6 @@ function seed() {
       createdAt: hoursAgo(1)
     },
     {
-      id: nextId++,
-      title: 'Typo on the account settings page',
-      priority: 'P4',
-      status: 'resolved',
-      assignee: 'web-team',
-      createdAt: hoursAgo(50)
-    },
-    {
       // Raised 3.5 hours ago against a 4-hour target, so roughly half an hour
       // of the target is left. Close to its deadline but not past it.
       id: nextId++,
@@ -57,6 +49,24 @@ function seed() {
       status: 'open',
       assignee: 'identity-team',
       createdAt: hoursAgo(3.5)
+    },
+    {
+      // Finished work. Long past its target, but nobody needs to act on it.
+      id: nextId++,
+      title: 'Typo on the account settings page',
+      priority: 'P4',
+      status: 'resolved',
+      assignee: 'web-team',
+      createdAt: hoursAgo(100)
+    },
+    {
+      // Also finished, and closed rather than resolved.
+      id: nextId++,
+      title: 'Legacy VPN certificate warning',
+      priority: 'P2',
+      status: 'closed',
+      assignee: 'network-team',
+      createdAt: hoursAgo(10)
     }
   ];
 }
