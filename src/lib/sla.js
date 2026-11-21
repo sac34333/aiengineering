@@ -21,13 +21,16 @@ function targetHoursFor(priority) {
 function deadlineFor(incident) {
   const created = new Date(incident.createdAt);
   const hours = targetHoursFor(incident.priority);
-  return new Date(created.getTime() + hours * 60 * 1000);
+  return new Date(created.getTime() + hours * 60 * 60 * 1000);
 }
 
 // Minutes remaining before the deadline. Negative once it has passed.
 function minutesRemaining(incident, now = new Date()) {
   const deadline = deadlineFor(incident);
-  return Math.round((deadline.getTime() - now.getTime()) / 60000);
+  const minutes = Math.round((deadline.getTime() - now.getTime()) / 60000);
+  // Math.round returns -0 for a tiny negative difference. Normalize it so
+  // callers comparing against 0 behave predictably.
+  return minutes === 0 ? 0 : minutes;
 }
 
 function isBreached(incident, now = new Date()) {
