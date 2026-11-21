@@ -47,6 +47,16 @@ function seed() {
       status: 'resolved',
       assignee: 'web-team',
       createdAt: hoursAgo(50)
+    },
+    {
+      // Raised 3.5 hours ago against a 4-hour target, so roughly half an hour
+      // of the target is left. Close to its deadline but not past it.
+      id: nextId++,
+      title: 'Password reset emails delayed',
+      priority: 'P2',
+      status: 'open',
+      assignee: 'identity-team',
+      createdAt: hoursAgo(3.5)
     }
   ];
 }
