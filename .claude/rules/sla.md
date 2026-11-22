@@ -17,14 +17,19 @@ from the incident's `createdAt`.
 | P3 | 24 hours |
 | P4 | 72 hours |
 
-## Which incidents can breach
+## Which incidents are still being worked on
 
-Only `open` and `in_progress` incidents can breach. A `resolved` or `closed`
-incident is finished, so nobody needs to act on it and it must never appear in a
-list of work that needs attention.
+`VALID_STATUSES` in `src/data/store.js` lists four statuses:
 
-`VALID_STATUSES` has four entries. Two of them mean active and two mean finished.
-Any filter that decides what still needs attention must account for all four.
+- `open` and `in_progress` mean someone is still working on the incident.
+- `resolved` and `closed` mean the work is finished.
+
+Never include a finished incident in a list of work to act on. There is nothing
+left to do on it.
+
+Closing an incident does not stop its clock, so a finished incident keeps counting
+past its deadline and can look badly overdue. Use the status, not the deadline, to
+decide whether it still needs attention.
 
 ## How the derived fields behave
 
