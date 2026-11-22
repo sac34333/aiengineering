@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/at-risk', (req, res) => {
-  res.json({ incidents: service.listAtRisk() });
+  res.json({ incidents: service.listAtRiskIncidents() });
 });
 
 router.get('/:id', (req, res) => {
