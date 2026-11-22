@@ -116,6 +116,37 @@ test('PATCH /incidents/:id/status rejects an unknown status', async () => {
   assert.equal(res.status, 400);
 });
 
+test('GET /incidents/at-risk returns an incidents array', async () => {
+  const res = await fetch(`${baseUrl}/incidents/at-risk`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.ok(Array.isArray(body.incidents));
+});
+
+test('GET /incidents/at-risk excludes finished incidents', async () => {
+  const res = await fetch(`${baseUrl}/incidents/at-risk`);
+  const body = await res.json();
+  assert.ok(body.incidents.every((i) => i.status !== 'resolved' && i.status !== 'closed'));
+});
+
+test('GET /incidents/at-risk orders by least time remaining first', async () => {
+  const res = await fetch(`${baseUrl}/incidents/at-risk`);
+  const body = await res.json();
+  const remaining = body.incidents.map((i) => i.minutesRemaining);
+  const sorted = [...remaining].sort((a, b) => a - b);
+  assert.deepEqual(remaining, sorted);
+});
+
+test('GET /incidents/at-risk includes the derived SLA fields', async () => {
+  const res = await fetch(`${baseUrl}/incidents/at-risk`);
+  const body = await res.json();
+  for (const incident of body.incidents) {
+    assert.ok(typeof incident.slaDeadline === 'string');
+    assert.ok(typeof incident.minutesRemaining === 'number');
+    assert.ok(typeof incident.breached === 'boolean');
+  }
+});
+
 test('PATCH /incidents/:id/assignee sets the assignee', async () => {
   const res = await fetch(`${baseUrl}/incidents/2/assignee`, {
     method: 'PATCH',

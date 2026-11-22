@@ -31,6 +31,29 @@ function getIncident(id) {
   return incident ? withSla(incident) : undefined;
 }
 
+// Statuses that mean someone is still working on the incident. A resolved or
+// closed incident is finished, so it never belongs in a list of work to act on.
+const ACTIVE_STATUSES = ['open', 'in_progress'];
+
+// An incident is at risk once 25% or less of its resolution target remains.
+// This is a product decision rather than contract data, so it lives here and
+// not alongside SLA_TARGET_HOURS in src/lib/sla.js.
+const AT_RISK_FRACTION = 0.25;
+
+// Reuses listIncidents() so every incident passes through withSla once. The
+// value used to filter, the value used to sort and the value in the response
+// are then all the same reading of the clock.
+function listAtRiskIncidents() {
+  return listIncidents()
+    .filter((i) => ACTIVE_STATUSES.includes(i.status))
+    .filter(
+      (i) =>
+        i.minutesRemaining <=
+        sla.targetHoursFor(i.priority) * 60 * AT_RISK_FRACTION
+    )
+    .sort((a, b) => a.minutesRemaining - b.minutesRemaining);
+}
+
 function createIncident(payload) {
   const title = (payload.title || '').trim();
   if (!title) {
@@ -65,6 +88,7 @@ function assign(id, assignee) {
 module.exports = {
   ValidationError,
   listIncidents,
+  listAtRiskIncidents,
   getIncident,
   createIncident,
   updateStatus,
